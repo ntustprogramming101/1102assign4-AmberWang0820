@@ -17,7 +17,11 @@ final int BUTTON_RIGHT = 392;
 int[][] soilHealth;
 
 int x=0, y=0;//stone's position
-int soldierX, soldierY, cabbageX, cabbageY;//soldier,cabbage's position
+//soldier,cabbage's position
+float [] soldierX = new float[6];
+float [] soldierY = new float[6];
+float [] cabbageX = new float[6];
+float [] cabbageY = new float[6];
 int soldierSize;
 int soldierSpeed;
 float groundhogX;//groundhog's position
@@ -42,6 +46,7 @@ float t;//groundhog move timer
 float moveY=0;//roll the soil
 
 int playerHealth;
+final int PLAYER_MAX_HEALTH = 5;
 
 boolean demoMode = false;
 
@@ -145,8 +150,11 @@ void setup() {
   }
 
   //soldier
-  soldierX = -160;
-  soldierY = SOIL_SIZE*floor(random(2, 6));
+  for (int i=0; i<6; i++) {
+    soldierX[i] = random(width);
+    soldierY[i] = SOIL_SIZE*(2+i*4) + SOIL_SIZE*floor(random(0, 4));
+    //println(soldierY[i]);
+  }
   soldierSize = 80;
   soldierSpeed = 3;//soldier
 
@@ -158,8 +166,10 @@ void setup() {
   hogState = HOG_IDLE;
 
   //cabbage
-  cabbageX = 80*floor(random(0, 8));
-  cabbageY = 80*floor(random(2, 6));
+  for (int i=0; i<6; i++) {
+    cabbageX[i] = SOIL_SIZE*floor(random(0, 8));
+    cabbageY[i] = SOIL_SIZE*(2+i*4) + SOIL_SIZE*floor(random(0, 4));
+  }
   cabbageSize=80;
 }
 
@@ -249,23 +259,23 @@ void draw() {
         image(soilEmpty, pos2[i]*SOIL_SIZE, (i+1)*SOIL_SIZE);
       }
     }
-    
+
     //if soilHealth == 0,HOG fall down
     for (int i=0; i<8; i++) {
-      for(int j=0; j<23; j++){
-        if(hogState == HOG_IDLE && t == 0.0 && soilHealth[pos1[j]][j+1] ==0 && groundhogX == pos1[j]*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ){
+      for (int j=0; j<23; j++) {
+        if (hogState == HOG_IDLE && t == 0.0 && soilHealth[pos1[j]][j+1] ==0 && groundhogX == pos1[j]*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
           hogState = HOG_DOWN;
           groundhogY += (80.0/15.0);
           t++;
         }
-        if(hogState == HOG_IDLE && t == 0.0 && soilHealth[pos2[j]][j+1] ==0 && groundhogX == pos2[j]*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ){
+        if (hogState == HOG_IDLE && t == 0.0 && soilHealth[pos2[j]][j+1] ==0 && groundhogX == pos2[j]*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
           hogState = HOG_DOWN;
           groundhogY += (80.0/15.0);
           t++;
         }
       }
     }
-    
+
 
     // Demo mode: Show the value of soilHealth on each soil
     // (DO NOT CHANGE THE CODE HERE!)
@@ -290,7 +300,21 @@ void draw() {
     line(0, 152.5, 640, 152.5);
 
     //characters
-
+    //cabbage
+    for (int i=0; i<6; i++) {
+      if (groundhogX < cabbageX[i]+cabbageSize &&//hog touch cabbage
+        groundhogX+groundhogSize > cabbageX[i] &&
+        groundhogY < cabbageY[i]+cabbageSize &&
+        groundhogY+groundhogSize > cabbageY[i] &&
+        playerHealth < PLAYER_MAX_HEALTH)
+      {
+        playerHealth+=1;
+        cabbageX[i]=-80;//let cabbage out of the screen
+        cabbageY[i]=-80;
+      }
+      image(cabbageImg, cabbageX[i], cabbageY[i]);
+    }
+    
     //Draw groundhog
     switch(hogState) {//control hog's state
     case HOG_IDLE:
@@ -316,7 +340,7 @@ void draw() {
       t++;
       break;
     }
-    
+
     //groundhog boundary detection
     if (groundhogX > width-groundhogSize) {
       groundhogX = width-groundhogSize;
@@ -346,43 +370,37 @@ void draw() {
       }
     }
     //hog touch soldier
-    if (groundhogX < soldierX+soldierSize &&
-      groundhogX+groundhogSize > soldierX &&
-      groundhogY < soldierY+soldierSize &&
-      groundhogY+groundhogSize > soldierY)
-    {
-      playerHealth-=1;
-      groundhogX=320.0;
-      groundhogY=80.0;
-      hogState=HOG_IDLE;
+    for (int i=0; i<6; i++) {
+      if (groundhogX < soldierX[i]+soldierSize &&
+        groundhogX+groundhogSize > soldierX[i] &&
+        groundhogY < soldierY[i]+soldierSize &&
+        groundhogY+groundhogSize > soldierY[i])
+      {
+        playerHealth-=1;
+        groundhogX=320.0;
+        groundhogY=80.0;
+        hogState=HOG_IDLE;
+        moveY=0;
+      }
     }
     
-    
-    //cabbage
-    if (groundhogX < cabbageX+cabbageSize &&//hog touch cabbage
-      groundhogX+groundhogSize > cabbageX &&
-      groundhogY < cabbageY+cabbageSize &&
-      groundhogY+groundhogSize > cabbageY)
-    {
-      playerHealth+=1;
-      cabbageX=-80;//let cabbage out of the screen
-      cabbageY=-80;
-    }
-    image(cabbageImg, cabbageX, cabbageY);
-
     //Draw soldier
-    image(soldierImg, soldierX, soldierY);
-    soldierX += soldierSpeed;//soldier Walking Speed
-    if (soldierX > 640) {
-      soldierX = -80;
-      soldierX += soldierSpeed;
+    for (int i=0; i<6; i++) {
+      image(soldierImg, soldierX[i], soldierY[i]);
+      soldierX[i] += soldierSpeed;//soldier Walking Speed
+      if (soldierX[i] > 640) {
+        soldierX[i] = -80;
+        soldierX[i] += soldierSpeed;
+      }
     }
 
     popMatrix();
 
 
     //playerHealth (size: 50*43) game change; gap=20pixel
-    if (playerHealth >= 5) playerHealth = 5;
+    if (playerHealth >= PLAYER_MAX_HEALTH){
+      playerHealth = PLAYER_MAX_HEALTH;
+    }
     for (int i=0; i<playerHealth; i++) {
       image(lifeImg, 10+i*70, 10);
     }
@@ -413,9 +431,13 @@ void draw() {
         hogState=HOG_IDLE;
         t=0.0;
 
-        soldierY = 80*floor(random(2, 6));
-        cabbageX = 80*floor(random(0, 8));
-        cabbageY = 80*floor(random(2, 6));
+        for (int i=0; i<6; i++) {
+          soldierX[i] = random(width);
+          soldierY[i] = SOIL_SIZE*(2+i*4) + SOIL_SIZE*floor(random(0, 4));
+          cabbageX[i] = SOIL_SIZE*floor(random(0, 8));
+          cabbageY[i] = SOIL_SIZE*(2+i*4) + SOIL_SIZE*floor(random(0, 4));
+        }
+
 
         //empty soil
         for (int i=0; i<23; i++) {
