@@ -215,37 +215,73 @@ void draw() {
       for (int j = 0; j < soilHealth[i].length; j++) {
         // Change this part to show soil and stone images based on soilHealth value
         int areaIndex = floor(j / 4);
-        image(soils[areaIndex][4], i * SOIL_SIZE, j * SOIL_SIZE);
+        int soilState = 0;
+        if (soilHealth[i][j]<=45) {
+          soilState=4;
+        }
+        if (soilHealth[i][j]<=12) {
+          soilState=3;
+        }
+        if (soilHealth[i][j]<=9) {
+          soilState=2;
+        }
+        if (soilHealth[i][j]<=6) {
+          soilState=1;
+        }
+        if (soilHealth[i][j]<=3) {
+          soilState=0;
+        }
+        image(soils[areaIndex][soilState], i * SOIL_SIZE, j * SOIL_SIZE);
+        if (soilHealth[i][j]==0) {
+          image(soilEmpty, i*SOIL_SIZE, j*SOIL_SIZE);
+        }
       }
     }
 
-    //stone 1-8
-    for (int i=0; i<8; i++) {
-      image(stones[0][4], i*SOIL_SIZE, i*SOIL_SIZE);
-    }
-
-    //stone 9-16
-    for (int i=0; i<8; i++) {
-      for (int j=8; j<16; j++) {
-        if (i==0 || i==3 || i==4 || i==7) {
-          if (j==9 || j==10 || j==13 || j==14) {
-            image(stones[0][4], i*SOIL_SIZE, j*SOIL_SIZE);
+    //stone
+    for (int i = 0; i < soilHealth.length; i++) {
+      for (int j = 0; j < soilHealth[i].length; j++) {
+        int soilState = 0;
+        if (soilHealth[i][j]>=16) {
+          if (soilHealth[i][j]<=45) {
+            soilState=4;
           }
-        } else if (j==8 || j==11 || j==12 || j==15) {
-          image(stones[0][4], i*SOIL_SIZE, j*SOIL_SIZE);
+          if (soilHealth[i][j]<=27) {
+            soilState=3;
+          }
+          if (soilHealth[i][j]<=24) {
+            soilState=2;
+          }
+          if (soilHealth[i][j]<=21) {
+            soilState=1;
+          }
+          if (soilHealth[i][j]<=18) {
+            soilState=0;
+          }
+          image(stones[0][soilState], i * SOIL_SIZE, j * SOIL_SIZE);
         }
       }
     }
-
-    //stone 17-24
-    for (int i=0; i<8; i++) {
-      for (int j=16; j<24; j++) {
-        if (i+j==17 || i+j==20 || i+j==23 || i+j==26 || i+j==29) {
-          image(stones[0][4], i*SOIL_SIZE, j*SOIL_SIZE);
-        }
-        if (i+j==18 || i+j==21 || i+j==24 || i+j==27 || i+j==30) {
-          image(stones[0][4], i*SOIL_SIZE, j*SOIL_SIZE);
-          image(stones[1][4], i*SOIL_SIZE, j*SOIL_SIZE);
+    for (int i = 0; i < soilHealth.length; i++) {
+      for (int j = 0; j < soilHealth[i].length; j++) {
+        int soilState = 0;
+        if (soilHealth[i][j]>=31) {
+          if (soilHealth[i][j]<=45) {
+            soilState=4;
+          }
+          if (soilHealth[i][j]<=42) {
+            soilState=3;
+          }
+          if (soilHealth[i][j]<=39) {
+            soilState=2;
+          }
+          if (soilHealth[i][j]<=36) {
+            soilState=1;
+          }
+          if (soilHealth[i][j]<=33) {
+            soilState=0;
+          }
+          image(stones[1][soilState], i * SOIL_SIZE, j * SOIL_SIZE);
         }
       }
     }
@@ -263,12 +299,7 @@ void draw() {
     //if soilHealth == 0,HOG fall down
     for (int i=0; i<8; i++) {
       for (int j=0; j<23; j++) {
-        if (hogState == HOG_IDLE && t == 0.0 && soilHealth[pos1[j]][j+1] ==0 && groundhogX == pos1[j]*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
-          hogState = HOG_DOWN;
-          groundhogY += (80.0/15.0);
-          t++;
-        }
-        if (hogState == HOG_IDLE && t == 0.0 && soilHealth[pos2[j]][j+1] ==0 && groundhogX == pos2[j]*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
+        if (soilHealth[i][j] ==0 && groundhogX == i*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
           hogState = HOG_DOWN;
           groundhogY += (80.0/15.0);
           t++;
@@ -314,30 +345,72 @@ void draw() {
       }
       image(cabbageImg, cabbageX[i], cabbageY[i]);
     }
-    
+
+    //calculate col&row position(use on dig soil)
+    int nowX = floor(groundhogX)/SOIL_SIZE;
+    int nowY = floor(groundhogY-SOIL_SIZE*2)/SOIL_SIZE;
+    //println(nowX, nowY);
+
     //Draw groundhog
     switch(hogState) {//control hog's state
     case HOG_IDLE:
       image(groundhogImg, groundhogX, groundhogY);
       t=0.0;
+      //if(){
+      //}
       break;
 
     case HOG_DOWN:
-      image(groundhogDownImg, groundhogX, groundhogY);
-      groundhogY += (80.0/15.0);
-      t++;
+      if (nowY < 23) {
+        if (soilHealth[nowX][nowY+1] > 0) {
+          soilHealth[nowX][nowY+1] --;
+          groundhogY += 0;
+          t=0;
+          image(groundhogDownImg, groundhogX, groundhogY);
+        }
+        if (soilHealth[nowX][nowY+1] == 0) {
+          groundhogY += (80.0/15.0);
+          t++;
+          image(groundhogDownImg, groundhogX, groundhogY);
+        }
+      }
+      //image(groundhogDownImg, groundhogX, groundhogY);
       break;
 
     case HOG_LEFT:
+      if (nowY>=0 && nowX>-1) {
+        if (soilHealth[nowX][nowY] > 0) {
+          soilHealth[nowX][nowY] --;
+          t=0;
+        }
+        if (soilHealth[nowX][nowY] == 0) {
+          groundhogX -= (80.0/15.0);
+          t++;
+        }
+      }
+      if (nowY == -1) {
+        groundhogX -= (80.0/15.0);
+        t++;
+      }
       image(groundhogLeftImg, groundhogX, groundhogY);
-      groundhogX -= (80.0/15.0);
-      t++;
       break;
 
     case HOG_RIGHT:
+      if (nowY>=0 && nowX<7) {
+        if (soilHealth[nowX+1][nowY] > 0) {
+          soilHealth[nowX+1][nowY] --;
+          t=0;
+        }
+        if (soilHealth[nowX+1][nowY] == 0) {
+          groundhogX += (80.0/15.0);
+          t++;
+        }
+      }
+      if (nowY == -1) {
+        groundhogX += (80.0/15.0);
+        t++;
+      }
       image(groundhogRightImg, groundhogX, groundhogY);
-      groundhogX += (80.0/15.0);
-      t++;
       break;
     }
 
@@ -377,13 +450,14 @@ void draw() {
         groundhogY+groundhogSize > soldierY[i])
       {
         playerHealth-=1;
+        soilHealth[4][0]=15;
         groundhogX=320.0;
         groundhogY=80.0;
         hogState=HOG_IDLE;
         moveY=0;
       }
     }
-    
+
     //Draw soldier
     for (int i=0; i<6; i++) {
       image(soldierImg, soldierX[i], soldierY[i]);
@@ -398,7 +472,7 @@ void draw() {
 
 
     //playerHealth (size: 50*43) game change; gap=20pixel
-    if (playerHealth >= PLAYER_MAX_HEALTH){
+    if (playerHealth >= PLAYER_MAX_HEALTH) {
       playerHealth = PLAYER_MAX_HEALTH;
     }
     for (int i=0; i<playerHealth; i++) {
@@ -437,8 +511,14 @@ void draw() {
           cabbageX[i] = SOIL_SIZE*floor(random(0, 8));
           cabbageY[i] = SOIL_SIZE*(2+i*4) + SOIL_SIZE*floor(random(0, 4));
         }
-
-
+        
+        //fill soil
+        for (int i = 0; i < soilHealth.length; i++) {
+          for (int j = 0; j < soilHealth[i].length; j++) {
+            soilHealth[i][j]=15;
+          }
+        }
+        
         //empty soil
         for (int i=0; i<23; i++) {
           for (int n=0; n<floor(random(1, 3)); n++) {
@@ -466,31 +546,41 @@ void keyPressed() {
   if (key==CODED) {
     switch (keyCode) {
     case DOWN:
-      if (hogState == HOG_IDLE) {
-        downPressed=true;
-        hogState = HOG_DOWN;
-        t=0.0;
-      }
+      downPressed=true;
+      hogState = HOG_DOWN;
+      t=0.0;
       break;
     case LEFT:
-      if (hogState == HOG_IDLE) {
-        leftPressed=true;
-        hogState = HOG_LEFT;
-        t=0.0;
-      }
+      leftPressed=true;
+      hogState = HOG_LEFT;
+      t=0.0;
       break;
     case RIGHT:
-      if (hogState == HOG_IDLE) {
-        rightPressed=true;
-        hogState = HOG_RIGHT;
-        t=0.0;
-      }
+      rightPressed=true;
+      hogState = HOG_RIGHT;
+      t=0.0;
       break;
     }
   } else {
     if (key=='b') {
       // Press B to toggle demo mode
       demoMode = !demoMode;
+    }
+  }
+}
+
+void keyReleased() {
+  if (key == CODED) {
+    switch (keyCode) {
+    case DOWN:
+      hogState = HOG_IDLE;
+      break;
+    case LEFT:
+      hogState = HOG_IDLE;
+      break;
+    case RIGHT:
+      hogState = HOG_IDLE;
+      break;
     }
   }
 }
