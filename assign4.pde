@@ -352,13 +352,13 @@ void draw() {
       if (nowY < 23) {
         if (soilHealth[nowX][nowY+1] > 0) {
           soilHealth[nowX][nowY+1] --;
-          groundhogY += 0;
+          groundhogY += (80.0/15.0);
           t=0;
         }
-        if (soilHealth[nowX][nowY+1] == 0) {
-          groundhogY += (80.0/15.0);
-          t++;
-        }
+        //if (soilHealth[nowX][nowY+1] == 0) {
+          //groundhogY += (80.0/15.0);
+          //t++;
+        //}
       }
       image(groundhogDownImg, groundhogX, groundhogY);
       break;
