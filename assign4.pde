@@ -573,13 +573,10 @@ void keyReleased() {
   if (key == CODED) {
     switch (keyCode) {
     case DOWN:
-      hogState = HOG_IDLE;
       break;
     case LEFT:
-      hogState = HOG_IDLE;
       break;
     case RIGHT:
-      hogState = HOG_IDLE;
       break;
     }
   }
