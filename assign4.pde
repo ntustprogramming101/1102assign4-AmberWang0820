@@ -1,3 +1,7 @@
+//I don't know why it cant't show on the webpage
+//but if you want to see hog walk to the bottom, you can copy it to your computer and open it
+//That might work better. ;v;
+
 PImage skyImg, lifeImg, soldierImg, cabbageImg;
 PImage soilEmpty, soil0, soil1, soil2, soil3, soil4, soil5, stone1, stone2;
 PImage groundhogImg, groundhogDownImg, groundhogLeftImg, groundhogRightImg;
@@ -300,10 +304,9 @@ void draw() {
     for (int i=0; i<8; i++) {
       for (int j=0; j<23; j++) {
         if (soilHealth[i][j] ==0 && groundhogX == i*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
-          //hogState = HOG_DOWN;
+          hogState = HOG_DOWN;
           groundhogY += (80.0/15.0);
           t++;
-          image(groundhogDownImg, groundhogX, groundhogY);
         }
       }
     }
@@ -357,8 +360,6 @@ void draw() {
     case HOG_IDLE:
       image(groundhogImg, groundhogX, groundhogY);
       t=0.0;
-      //if(){
-      //}
       break;
 
     case HOG_DOWN:
@@ -572,13 +573,16 @@ void keyReleased() {
   if (key == CODED) {
     switch (keyCode) {
     case DOWN:
-      //hogState = HOG_IDLE;
+      hogState = HOG_IDLE;
+      t=0;
       break;
     case LEFT:
-      //hogState = HOG_IDLE;
+      hogState = HOG_IDLE;
+      t=0;
       break;
     case RIGHT:
-      //hogState = HOG_IDLE;
+      hogState = HOG_IDLE;
+      t=0;
       break;
     }
   }
