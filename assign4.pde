@@ -296,6 +296,18 @@ void draw() {
       }
     }
 
+    //if soilHealth == 0,HOG fall down
+    for (int i=0; i<8; i++) {
+      for (int j=0; j<23; j++) {
+        if (soilHealth[i][j] ==0 && groundhogX == i*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
+          hogState = HOG_DOWN;
+          groundhogY += (80.0/15.0);
+          t++;
+        }
+      }
+    }
+
+
     // Demo mode: Show the value of soilHealth on each soil
     // (DO NOT CHANGE THE CODE HERE!)
 
@@ -352,18 +364,17 @@ void draw() {
       if (nowY < 23) {
         if (soilHealth[nowX][nowY+1] > 0) {
           soilHealth[nowX][nowY+1] --;
-          groundhogY += (80.0/15.0);
-          t++;
-        }else{
           groundhogY += 0;
           t=0;
+          image(groundhogDownImg, groundhogX, groundhogY);
         }
-        //if (soilHealth[nowX][nowY+1] == 0) {
-          //groundhogY += (80.0/15.0);
-          //t++;
-        //}
+        if (soilHealth[nowX][nowY+1] == 0) {
+          groundhogY += (80.0/15.0);
+          t++;
+          image(groundhogDownImg, groundhogX, groundhogY);
+        }
       }
-      image(groundhogDownImg, groundhogX, groundhogY);
+      //image(groundhogDownImg, groundhogX, groundhogY);
       break;
 
     case HOG_LEFT:
@@ -402,16 +413,7 @@ void draw() {
       image(groundhogRightImg, groundhogX, groundhogY);
       break;
     }
-    
-    //if soilHealth == 0,HOG fall down
-    for (int i=0; i<8; i++) {
-      for (int j=0; j<23; j++) {
-        if (soilHealth[i][j] ==0 && groundhogX == i*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
-          hogState = HOG_DOWN;
-        }
-      }
-    }
-    
+
     //groundhog boundary detection
     if (groundhogX > width-groundhogSize) {
       groundhogX = width-groundhogSize;
