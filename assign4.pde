@@ -300,9 +300,10 @@ void draw() {
     for (int i=0; i<8; i++) {
       for (int j=0; j<23; j++) {
         if (soilHealth[i][j] ==0 && groundhogX == i*SOIL_SIZE && groundhogY == (j+2)*SOIL_SIZE ) {
-          hogState = HOG_DOWN;
+          //hogState = HOG_DOWN;
           groundhogY += (80.0/15.0);
           t++;
+          image(groundhogDownImg, groundhogX, groundhogY);
         }
       }
     }
@@ -366,15 +367,13 @@ void draw() {
           soilHealth[nowX][nowY+1] --;
           groundhogY += 0;
           t=0;
-          image(groundhogDownImg, groundhogX, groundhogY);
         }
         if (soilHealth[nowX][nowY+1] == 0) {
           groundhogY += (80.0/15.0);
           t++;
-          image(groundhogDownImg, groundhogX, groundhogY);
         }
       }
-      //image(groundhogDownImg, groundhogX, groundhogY);
+      image(groundhogDownImg, groundhogX, groundhogY);
       break;
 
     case HOG_LEFT:
@@ -573,13 +572,13 @@ void keyReleased() {
   if (key == CODED) {
     switch (keyCode) {
     case DOWN:
-      hogState = HOG_IDLE;
+      //hogState = HOG_IDLE;
       break;
     case LEFT:
-      hogState = HOG_IDLE;
+      //hogState = HOG_IDLE;
       break;
     case RIGHT:
-      hogState = HOG_IDLE;
+      //hogState = HOG_IDLE;
       break;
     }
   }
