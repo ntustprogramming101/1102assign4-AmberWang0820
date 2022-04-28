@@ -353,6 +353,9 @@ void draw() {
         if (soilHealth[nowX][nowY+1] > 0) {
           soilHealth[nowX][nowY+1] --;
           groundhogY += (80.0/15.0);
+          t++;
+        }else{
+          groundhogY += 0;
           t=0;
         }
         //if (soilHealth[nowX][nowY+1] == 0) {
