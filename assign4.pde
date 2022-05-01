@@ -62,14 +62,6 @@ void setup() {
 
   soilEmpty = loadImage("img/soils/soilEmpty.png");
 
-  // Load soil images used in assign3 if you don't plan to finish requirement #6
-  soil0 = loadImage("img/soil0.png");
-  soil1 = loadImage("img/soil1.png");
-  soil2 = loadImage("img/soil2.png");
-  soil3 = loadImage("img/soil3.png");
-  soil4 = loadImage("img/soil4.png");
-  soil5 = loadImage("img/soil5.png");
-
   cabbageX = new float[6];
   cabbageY = new float[6];
   soldierX = new float[6];
@@ -532,24 +524,6 @@ void draw() {
             soilHealth[i][j] = 15;
           }
         }
-
-        //empty soil
-        for (int i=0; i<23; i++) {
-          for (int n=0; n<floor(random(1, 3)); n++) {
-            //in one layer, pick positions
-            if (n < 1) {
-              pos1[i] = floor(random(8));
-              soilHealth[pos1[i]][i+1] = 0;
-            } else {
-              pos2[i] = floor(random(8));
-              if (pos1[i] == pos2[i]) {
-                pos2[i] = floor(random(8));
-              }
-              soilHealth[pos2[i]][i+1] = 0;
-              //println("HERE IS TWO : ROW "+ (i+1) + " COL " + pos2[i]);
-            }
-          }
-        }
         
         //stone soilHealth part
         //stone 1-8
@@ -581,7 +555,25 @@ void draw() {
             }
           }
         }
-
+        
+        //empty soil
+        for (int i=0; i<23; i++) {
+          for (int n=0; n<floor(random(1, 3)); n++) {
+            //in one layer, pick positions
+            if (n < 1) {
+              pos1[i] = floor(random(8));
+              soilHealth[pos1[i]][i+1] = 0;
+            } else {
+              pos2[i] = floor(random(8));
+              if (pos1[i] == pos2[i]) {
+                pos2[i] = floor(random(8));
+              }
+              soilHealth[pos2[i]][i+1] = 0;
+              //println("HERE IS TWO : ROW "+ (i+1) + " COL " + pos2[i]);
+            }
+          }
+        }
+        
         // Initialize soidiers, cabbages and their position
         for (int i=0; i<6; i++) {
           soldierX[i] = random(width);
